@@ -16,15 +16,15 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <nav className="sticky top-0 z-50 bg-white shadow-md">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-16">
 
-        <div className="font-bold text-xl text-green-700">
+        <h1 className="font-bold text-lg text-green-700">
           RT 003 RW 024
-        </div>
+        </h1>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex gap-6">
+        {/* Desktop */}
+        <div className="hidden md:flex items-center gap-6">
           {menus.map((menu) => (
             <a
               key={menu.name}
@@ -36,8 +36,9 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Tombol HP */}
+        {/* Mobile Button */}
         <button
+          type="button"
           onClick={() => setOpen(!open)}
           className="md:hidden text-3xl text-green-700"
         >
@@ -47,23 +48,22 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      {open && (
-        <div className="md:hidden bg-white border-t px-6 pb-5">
-
-          {menus.map((menu) => (
-            <a
-              key={menu.name}
-              href={menu.link}
-              onClick={() => setOpen(false)}
-              className="block py-3 text-gray-700 border-b hover:text-green-700"
-            >
-              {menu.name}
-            </a>
-          ))}
-
-        </div>
-      )}
-
+      <div
+        className={`md:hidden bg-white border-t shadow-lg overflow-hidden transition-all duration-300 ${
+          open ? "max-h-96" : "max-h-0"
+        }`}
+      >
+        {menus.map((menu) => (
+          <a
+            key={menu.name}
+            href={menu.link}
+            onClick={() => setOpen(false)}
+            className="block px-6 py-4 border-b text-gray-700 hover:bg-green-50"
+          >
+            {menu.name}
+          </a>
+        ))}
+      </div>
     </nav>
   );
 }
