@@ -9,7 +9,9 @@ export default function ComponentProfileRT() {
         <div className="flex justify-center mb-8">
           <div className="p-2 rounded-full bg-gradient-to-br from-blue-600 via-sky-500 to-cyan-400 shadow-2xl">
             <Image
-              src="/images/KetuaRT.png"
+              src="/images/
+              
+              ketuaRT.png"
               alt="Rahman Yasir, S.H., CPLA"
               width={220}
               height={220}
