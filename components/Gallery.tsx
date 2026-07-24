@@ -1,12 +1,12 @@
-export default function Gallery() {
-  const photos = [
-    "https://placehold.co/600x400",
-    "https://placehold.co/600x400",
-    "https://placehold.co/600x400",
-    "https://placehold.co/600x400",
-    "https://placehold.co/600x400",
-    "https://placehold.co/600x400",
-  ];
+import { supabase } from "@/lib/supabase";
+import Image from "next/image";
+
+export default async function Gallery() {
+  const { data: photos } = await supabase
+    .from("galeri")
+    .select("*")
+    .order("tanggal", { ascending: false })
+    .limit(6);
 
   return (
     <section className="py-20 bg-slate-100">
@@ -21,18 +21,34 @@ export default function Gallery() {
         </p>
 
         <div className="grid md:grid-cols-3 gap-6 mt-12">
-          {photos.map((photo, index) => (
+
+          {photos?.map((item) => (
             <div
-              key={index}
-              className="overflow-hidden rounded-3xl shadow-lg bg-white"
+              key={item.id}
+              className="overflow-hidden rounded-3xl shadow-lg bg-white hover:shadow-xl transition"
             >
-              <img
-                src={photo}
-                alt={`Galeri ${index + 1}`}
-                className="w-full h-64 object-cover hover:scale-110 transition duration-300"
+              <Image
+                src={item.gambar}
+                alt={item.judul}
+                width={600}
+                height={400}
+                className="w-full h-64 object-cover"
               />
+
+              <div className="p-5">
+
+                <h3 className="text-xl font-bold">
+                  {item.judul}
+                </h3>
+
+                <p className="text-gray-600 mt-2">
+                  {item.deskripsi}
+                </p>
+
+              </div>
             </div>
           ))}
+
         </div>
 
       </div>

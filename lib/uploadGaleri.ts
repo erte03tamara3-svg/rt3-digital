@@ -1,16 +1,18 @@
 import { supabase } from "./supabase";
 
 export async function uploadGaleri(file: File) {
-
   const ext = file.name.split(".").pop();
-
   const fileName = `${Date.now()}.${ext}`;
 
-  const { error } = await supabase.storage
+  const result = await supabase.storage
     .from("galeri")
     .upload(fileName, file);
 
-  if (error) throw error;
+  console.log("UPLOAD RESULT:", result);
+
+  if (result.error) {
+    throw result.error;
+  }
 
   const { data } = supabase.storage
     .from("galeri")

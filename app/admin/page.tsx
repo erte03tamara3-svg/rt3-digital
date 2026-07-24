@@ -1,70 +1,32 @@
+import Link from "next/link";
+
 export default function AdminDashboard() {
-  const cards = [
-    {
-      title: "Total Warga",
-      value: "0",
-      color: "bg-blue-600",
-    },
-    {
-      title: "Pengumuman",
-      value: "0",
-      color: "bg-green-600",
-    },
-    {
-      title: "Agenda",
-      value: "0",
-      color: "bg-yellow-500",
-    },
-    {
-      title: "Galeri",
-      value: "0",
-      color: "bg-purple-600",
-    },
+  const menus = [
+    { title: "Galeri", href: "/admin/galeri", icon: "🖼️" },
+    { title: "Pengumuman", href: "/admin/pengumuman", icon: "📢" },
+    { title: "Agenda", href: "/admin/agenda", icon: "📅" },
+    { title: "Data Warga", href: "/admin/warga", icon: "👥" },
+    { title: "Surat", href: "/admin/surat", icon: "📄" },
+    { title: "Transparansi", href: "/admin/transparansi", icon: "💰" },
   ];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-3xl font-bold">
-          Selamat Datang di Dashboard Admin
-        </h2>
-        <p className="text-gray-600 mt-2">
-          Kelola seluruh konten website RT 003 RW 024 dari halaman ini.
-        </p>
-      </div>
+    <div className="max-w-7xl mx-auto p-8">
+      <h1 className="text-4xl font-bold mb-8">
+        Dashboard Admin RT3 Digital
+      </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        {cards.map((card) => (
-          <div
-            key={card.title}
-            className={`${card.color} text-white rounded-xl shadow-lg p-6`}
+      <div className="grid md:grid-cols-3 gap-6">
+        {menus.map((menu) => (
+          <Link
+            key={menu.href}
+            href={menu.href}
+            className="border rounded-xl p-8 shadow hover:shadow-lg transition bg-white"
           >
-            <div className="text-lg">{card.title}</div>
-            <div className="text-4xl font-bold mt-3">{card.value}</div>
-          </div>
+            <div className="text-5xl">{menu.icon}</div>
+            <h2 className="mt-4 text-2xl font-bold">{menu.title}</h2>
+          </Link>
         ))}
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow p-6">
-          <h3 className="text-xl font-semibold mb-4">
-            Pengajuan Surat Terbaru
-          </h3>
-
-          <div className="border rounded-lg p-4 text-gray-500 text-center">
-            Belum ada pengajuan surat.
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow p-6">
-          <h3 className="text-xl font-semibold mb-4">
-            Aktivitas Terbaru
-          </h3>
-
-          <div className="border rounded-lg p-4 text-gray-500 text-center">
-            Belum ada aktivitas.
-          </div>
-        </div>
       </div>
     </div>
   );
