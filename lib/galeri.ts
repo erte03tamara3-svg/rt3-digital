@@ -20,4 +20,4 @@ export async function getGaleri(): Promise<Galeri[]> {
   }
 
   return data as Galeri[];
-}j
+}
