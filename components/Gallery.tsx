@@ -1,17 +1,30 @@
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic";
+
 export default async function Gallery() {
-  const { data: photos } = await supabase
-    .from("galeri")
-    .select("*")
-    .order("tanggal", { ascending: false })
-    .limit(6);
+  let photos: any[] = [];
+
+  try {
+    const { data, error } = await supabase
+      .from("galeri")
+      .select("*")
+      .order("tanggal", { ascending: false })
+      .limit(6);
+
+    if (error) {
+      console.error(error);
+    } else {
+      photos = data ?? [];
+    }
+  } catch (error) {
+    console.error(error);
+  }
 
   return (
     <section className="py-20 bg-slate-100">
       <div className="max-w-7xl mx-auto px-6">
-
         <h2 className="text-4xl font-bold text-center">
           Galeri Kegiatan
         </h2>
@@ -21,8 +34,7 @@ export default async function Gallery() {
         </p>
 
         <div className="grid md:grid-cols-3 gap-6 mt-12">
-
-          {photos?.map((item) => (
+          {photos.map((item) => (
             <div
               key={item.id}
               className="overflow-hidden rounded-3xl shadow-lg bg-white hover:shadow-xl transition"
@@ -36,7 +48,6 @@ export default async function Gallery() {
               />
 
               <div className="p-5">
-
                 <h3 className="text-xl font-bold">
                   {item.judul}
                 </h3>
@@ -44,13 +55,10 @@ export default async function Gallery() {
                 <p className="text-gray-600 mt-2">
                   {item.deskripsi}
                 </p>
-
               </div>
             </div>
           ))}
-
         </div>
-
       </div>
     </section>
   );
