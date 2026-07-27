@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import Image from "next/image";
 
 type GalleryItem = {
   id: number;
@@ -35,14 +34,11 @@ export default function GalleryList() {
   }, []);
 
   async function hapusFoto(item: GalleryItem) {
-    const yakin = confirm(
-      `Yakin ingin menghapus "${item.judul}"?`
-    );
+    const yakin = confirm(`Yakin ingin menghapus "${item.judul}"?`);
 
     if (!yakin) return;
 
     try {
-      // hapus data database
       const { error } = await supabase
         .from("galeri")
         .delete()
@@ -50,7 +46,6 @@ export default function GalleryList() {
 
       if (error) throw error;
 
-      // hapus file storage (jika memungkinkan)
       try {
         const url = new URL(item.gambar);
         const fileName = url.pathname.split("/").pop();
@@ -60,10 +55,9 @@ export default function GalleryList() {
             .from("galeri")
             .remove([fileName]);
         }
-      } catch (_) {}
+      } catch {}
 
       alert("Foto berhasil dihapus.");
-
       loadData();
 
     } catch (err: any) {
@@ -90,12 +84,11 @@ export default function GalleryList() {
             className="bg-white rounded-xl shadow overflow-hidden"
           >
 
-            <Image
+            <img
               src={item.gambar}
               alt={item.judul}
-              width={600}
-              height={400}
-              className="w-full h-60 object-cover"
+              className="w-full h-auto"
+              loading="lazy"
             />
 
             <div className="p-4">
@@ -111,14 +104,14 @@ export default function GalleryList() {
               <div className="flex gap-3">
 
                 <button
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"
                   onClick={() => alert("Fitur Edit akan dibuat berikutnya")}
                 >
                   ✏️ Edit
                 </button>
 
                 <button
-                  className="flex-1 bg-red-600 text-white py-2 rounded-lg"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition"
                   onClick={() => hapusFoto(item)}
                 >
                   🗑️ Hapus
