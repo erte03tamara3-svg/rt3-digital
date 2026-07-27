@@ -29,7 +29,6 @@ export default function GalleryUploader() {
         .toString(36)
         .substring(2, 8)}.${ext}`;
 
-      // Upload ke Storage
       const { error: uploadError } = await supabase.storage
         .from("galeri")
         .upload(fileName, file, {
@@ -42,12 +41,10 @@ export default function GalleryUploader() {
         return;
       }
 
-      // Ambil Public URL
       const {
         data: { publicUrl },
       } = supabase.storage.from("galeri").getPublicUrl(fileName);
 
-      // Simpan ke Database
       const { error: dbError } = await supabase.from("galeri").insert({
         judul,
         deskripsi,
@@ -118,9 +115,8 @@ export default function GalleryUploader() {
       <input
         type="file"
         accept="image/*"
-        capture="environment"
         onChange={pilihFile}
-        className="mb-5 block w-full"
+        className="mb-5 block w-full border rounded-lg p-2"
       />
 
       {preview && (
