@@ -5,14 +5,19 @@ import { supabase } from "@/lib/supabase";
 
 export default function GalleryUploader() {
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>("");
+  const [preview, setPreview] = useState("");
   const [judul, setJudul] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function uploadPhoto() {
     if (!file) {
-      alert("Pilih foto terlebih dahulu.");
+      alert("Silakan pilih foto terlebih dahulu.");
+      return;
+    }
+
+    if (judul.trim() === "") {
+      alert("Judul kegiatan wajib diisi.");
       return;
     }
 
@@ -20,29 +25,41 @@ export default function GalleryUploader() {
       setLoading(true);
 
       const ext = file.name.split(".").pop();
-      const fileName = `${Date.now()}.${ext}`;
+      const fileName = `${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(2, 8)}.${ext}`;
 
+      // Upload ke Storage
       const { error: uploadError } = await supabase.storage
         .from("galeri")
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from("galeri")
-        .getPublicUrl(fileName);
-
-      const { error: dbError } = await supabase
-        .from("galeri")
-        .insert({
-          judul,
-          deskripsi,
-          gambar: data.publicUrl,
+        .upload(fileName, file, {
+          cacheControl: "3600",
+          upsert: false,
         });
 
-      if (dbError) throw dbError;
+      if (uploadError) {
+        alert("Upload gagal:\n" + uploadError.message);
+        return;
+      }
 
-      alert("Upload berhasil");
+      // Ambil Public URL
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("galeri").getPublicUrl(fileName);
+
+      // Simpan ke Database
+      const { error: dbError } = await supabase.from("galeri").insert({
+        judul,
+        deskripsi,
+        gambar: publicUrl,
+      });
+
+      if (dbError) {
+        alert("Gagal menyimpan database:\n" + dbError.message);
+        return;
+      }
+
+      alert("Foto berhasil diupload.");
 
       setJudul("");
       setDeskripsi("");
@@ -50,9 +67,8 @@ export default function GalleryUploader() {
       setPreview("");
 
       window.location.reload();
-
-    } catch (err: any) {
-      alert(err.message);
+    } catch (error: any) {
+      alert(error.message);
     } finally {
       setLoading(false);
     }
@@ -69,7 +85,7 @@ export default function GalleryUploader() {
     }
 
     if (selected.size > 5 * 1024 * 1024) {
-      alert("Ukuran maksimal 5 MB.");
+      alert("Ukuran gambar maksimal 5 MB.");
       return;
     }
 
@@ -79,7 +95,6 @@ export default function GalleryUploader() {
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 mb-10">
-
       <h2 className="text-3xl font-bold mb-6">
         Upload Foto Kegiatan
       </h2>
@@ -103,8 +118,9 @@ export default function GalleryUploader() {
       <input
         type="file"
         accept="image/*"
+        capture="environment"
         onChange={pilihFile}
-        className="mb-5"
+        className="mb-5 block w-full"
       />
 
       {preview && (
@@ -118,11 +134,10 @@ export default function GalleryUploader() {
       <button
         onClick={uploadPhoto}
         disabled={loading}
-        className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-semibold transition disabled:opacity-50"
+        className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-8 py-3 rounded-xl font-semibold transition"
       >
         {loading ? "Mengupload..." : "Upload Foto"}
       </button>
-
     </div>
   );
 }
