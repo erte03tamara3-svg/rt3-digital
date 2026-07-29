@@ -1,10 +1,18 @@
-export default function AdminTransparansiPage() {
+import TransparansiForm from "@/components/admin/TransparansiForm";
+import TransparansiList from "@/components/admin/TransparansiList";
+
+export default function TransparansiPage() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Kelola Transparansi</h1>
-      <p className="mt-2 text-gray-600">
-        Halaman untuk mengelola laporan keuangan RT.
-      </p>
+    <div className="max-w-7xl mx-auto p-8">
+
+      <h1 className="text-4xl font-bold mb-8">
+        Transparansi Keuangan
+      </h1>
+
+      <TransparansiForm />
+
+      <TransparansiList />
+
     </div>
   );
 }

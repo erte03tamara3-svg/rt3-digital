@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 const menus = [
   { name: "Dashboard", href: "/admin" },
   { name: "Profil", href: "/admin/profil" },
+  { name: "Statistik", href: "/admin/statistik" },
   { name: "Pengumuman", href: "/admin/pengumuman" },
   { name: "Agenda", href: "/admin/agenda" },
   { name: "Galeri", href: "/admin/galeri" },
@@ -50,7 +51,6 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen flex bg-gray-100">
-      {/* Sidebar */}
       <aside className="w-64 bg-blue-900 text-white">
         <div className="p-6 text-2xl font-bold border-b border-blue-800">
           RT3 DIGITAL
@@ -73,7 +73,6 @@ export default function AdminLayout({
         </nav>
       </aside>
 
-      {/* Konten */}
       <div className="flex-1 flex flex-col">
         <header className="bg-white shadow px-8 py-5 flex justify-between items-center">
           <div>
