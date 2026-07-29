@@ -20,8 +20,10 @@ export default function TransparansiList({ onEdit }: Props) {
       .select("*")
       .order("tanggal", { ascending: false });
 
-    if (!error && hasil) {
-      setData(hasil);
+    if (error) {
+      alert(error.message);
+    } else {
+      setData(hasil || []);
     }
 
     setLoading(false);
@@ -44,7 +46,7 @@ export default function TransparansiList({ onEdit }: Props) {
       return;
     }
 
-    loadData();
+    await loadData();
   }
 
   function rupiah(nilai: number) {
@@ -58,7 +60,6 @@ export default function TransparansiList({ onEdit }: Props) {
 
   return (
     <div className="bg-white rounded-xl shadow overflow-x-auto">
-
       <table className="w-full">
 
         <thead className="bg-gray-100">
@@ -87,7 +88,6 @@ export default function TransparansiList({ onEdit }: Props) {
               </td>
 
               <td className="p-3">
-
                 <div className="flex justify-center gap-2">
 
                   <button
@@ -105,16 +105,25 @@ export default function TransparansiList({ onEdit }: Props) {
                   </button>
 
                 </div>
-
               </td>
 
             </tr>
           ))}
 
+          {data.length === 0 && (
+            <tr>
+              <td
+                colSpan={5}
+                className="text-center p-6 text-gray-500"
+              >
+                Belum ada data.
+              </td>
+            </tr>
+          )}
+
         </tbody>
 
       </table>
-
     </div>
   );
 }
