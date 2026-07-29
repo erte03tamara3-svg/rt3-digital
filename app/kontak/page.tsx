@@ -33,10 +33,14 @@ export default function KontakPage() {
   }
 
   function formatWhatsapp(nomor: string) {
-    let no = nomor.replace(/\D/g, "");
+    let no = nomor.replace(/[^\d]/g, "");
 
     if (no.startsWith("0")) {
       no = "62" + no.substring(1);
+    }
+
+    if (no.startsWith("62")) {
+      return no;
     }
 
     return no;
@@ -46,7 +50,6 @@ export default function KontakPage() {
     <section className="max-w-6xl mx-auto px-6 py-12">
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 md:p-12">
 
-        {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900">
             Kontak Penting
@@ -62,7 +65,7 @@ export default function KontakPage() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-                    {contacts.map((item) => (
+          {contacts.map((item) => (
             <div
               key={item.id}
               className="border rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition"
@@ -98,7 +101,7 @@ export default function KontakPage() {
                   </a>
 
                   <a
-                    href={`https://wa.me/${formatWhatsapp(item.nomor)}`}
+                    href={`https://api.whatsapp.com/send?phone=${formatWhatsapp(item.nomor)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
