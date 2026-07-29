@@ -18,7 +18,7 @@ export default function Gallery() {
 
   async function loadGallery() {
     const { data } = await supabase
-      .from("galeri")
+      .from("DOKUMENTASI KEGIATAN")
       .select("*")
       .order("created_at", { ascending: false });
 
