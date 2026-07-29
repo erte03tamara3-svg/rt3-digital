@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -49,6 +50,15 @@ export default function Home() {
             <p className="mt-2 opacity-90">
               Kelurahan Belian • Kecamatan Batam Kota
             </p>
+
+            <div className="mt-8">
+              <Link
+                href="/surat"
+                className="inline-flex items-center gap-2 bg-white text-green-700 font-semibold px-6 py-3 rounded-xl hover:bg-gray-100 transition"
+              >
+                📄 Ajukan Surat
+              </Link>
+            </div>
           </div>
         </section>
 
