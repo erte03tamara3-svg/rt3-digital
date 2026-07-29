@@ -12,7 +12,7 @@ const menus = [
   { name: "Agenda", href: "/admin/agenda" },
   { name: "Galeri", href: "/admin/galeri" },
   { name: "Transparansi", href: "/admin/transparansi" },
-  { name: "Kontak", href: "/admin/kontak" },
+  { name: "Kontak Penting", href: "/admin/kontak" },
   { name: "Data Warga", href: "/admin/warga" },
   { name: "Surat", href: "/admin/surat" },
 ];
@@ -98,7 +98,9 @@ export default function AdminLayout({
           </div>
         </header>
 
-        <main className="flex-1 p-8">{children}</main>
+        <main className="flex-1 p-8">
+          {children}
+        </main>
       </div>
     </div>
   );
