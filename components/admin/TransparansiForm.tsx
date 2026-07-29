@@ -66,7 +66,6 @@ export default function TransparansiForm() {
       <div className="grid md:grid-cols-2 gap-4">
 
         <div>
-
           <label className="font-semibold">
             Tanggal
           </label>
@@ -77,11 +76,9 @@ export default function TransparansiForm() {
             onChange={(e) => setTanggal(e.target.value)}
             className="w-full border rounded-lg p-3 mt-2"
           />
-
         </div>
 
         <div>
-
           <label className="font-semibold">
             Jenis
           </label>
@@ -91,10 +88,10 @@ export default function TransparansiForm() {
             onChange={(e) => setJenis(e.target.value)}
             className="w-full border rounded-lg p-3 mt-2"
           >
-            <option>Pemasukan</option>
-            <option>Pengeluaran</option>
+            <option value="Saldo Awal">Saldo Awal</option>
+            <option value="Pemasukan">Pemasukan</option>
+            <option value="Pengeluaran">Pengeluaran</option>
           </select>
-
         </div>
 
       </div>
@@ -109,7 +106,7 @@ export default function TransparansiForm() {
           type="text"
           value={uraian}
           onChange={(e) => setUraian(e.target.value)}
-          placeholder="Contoh : Iuran Bulanan RT"
+          placeholder="Contoh: Saldo Awal Juli 2026 / Iuran Bulanan RT"
           className="w-full border rounded-lg p-3 mt-2"
         />
 

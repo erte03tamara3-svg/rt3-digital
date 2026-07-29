@@ -15,6 +15,11 @@ export default async function TransparansiPage() {
     .select("*")
     .order("tanggal", { ascending: false });
 
+  const saldoAwal =
+    data
+      ?.filter((x) => x.jenis === "Saldo Awal")
+      .reduce((a, b) => a + b.nominal, 0) || 0;
+
   const pemasukan =
     data
       ?.filter((x) => x.jenis === "Pemasukan")
@@ -25,66 +30,113 @@ export default async function TransparansiPage() {
       ?.filter((x) => x.jenis === "Pengeluaran")
       .reduce((a, b) => a + b.nominal, 0) || 0;
 
-  const saldo = pemasukan - pengeluaran;
+  const saldoAkhir = saldoAwal + pemasukan - pengeluaran;
 
   return (
     <div className="max-w-6xl mx-auto py-10 px-6">
 
-      <h1 className="text-4xl font-bold mb-8">
+      <h1 className="text-4xl font-bold mb-8 text-center">
         Transparansi Keuangan
       </h1>
 
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
+      {/* Ringkasan */}
+      <div className="overflow-x-auto mb-8">
+        <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+          <thead className="bg-blue-700 text-white">
+            <tr>
+              <th className="p-4 text-left">Ringkasan Keuangan</th>
+              <th className="p-4 text-right">Nominal</th>
+            </tr>
+          </thead>
 
-        <div className="bg-green-600 text-white rounded-xl p-5">
-          <p>Total Pemasukan</p>
-          <h2 className="text-2xl font-bold">{rupiah(pemasukan)}</h2>
-        </div>
+          <tbody>
+            <tr className="border-b">
+              <td className="p-4 font-medium">Saldo Awal</td>
+              <td className="p-4 text-right">
+                {rupiah(saldoAwal)}
+              </td>
+            </tr>
 
-        <div className="bg-red-600 text-white rounded-xl p-5">
-          <p>Total Pengeluaran</p>
-          <h2 className="text-2xl font-bold">{rupiah(pengeluaran)}</h2>
-        </div>
+            <tr className="border-b bg-green-50">
+              <td className="p-4 font-medium text-green-700">
+                Uang Masuk
+              </td>
+              <td className="p-4 text-right font-semibold text-green-700">
+                {rupiah(pemasukan)}
+              </td>
+            </tr>
 
-        <div className="bg-blue-600 text-white rounded-xl p-5">
-          <p>Saldo</p>
-          <h2 className="text-2xl font-bold">{rupiah(saldo)}</h2>
-        </div>
+            <tr className="border-b bg-red-50">
+              <td className="p-4 font-medium text-red-700">
+                Uang Keluar
+              </td>
+              <td className="p-4 text-right font-semibold text-red-700">
+                {rupiah(pengeluaran)}
+              </td>
+            </tr>
 
+            <tr className="bg-blue-50">
+              <td className="p-4 font-bold text-blue-700">
+                Saldo Akhir
+              </td>
+              <td className="p-4 text-right font-bold text-blue-700 text-xl">
+                {rupiah(saldoAkhir)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <table className="w-full border">
-
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-3">Tanggal</th>
-            <th className="p-3">Uraian</th>
-            <th className="p-3">Jenis</th>
-            <th className="p-3 text-right">Nominal</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          {data?.map((item) => (
-            <tr key={item.id} className="border-t">
-
-              <td className="p-3">{item.tanggal}</td>
-
-              <td className="p-3">{item.uraian}</td>
-
-              <td className="p-3">{item.jenis}</td>
-
-              <td className="p-3 text-right">
-                {rupiah(item.nominal)}
-              </td>
-
+      {/* Detail Transaksi */}
+      <div className="overflow-x-auto">
+        <table className="w-full border border-gray-200">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-3 text-left">Tanggal</th>
+              <th className="p-3 text-left">Uraian</th>
+              <th className="p-3 text-left">Jenis</th>
+              <th className="p-3 text-right">Nominal</th>
             </tr>
-          ))}
+          </thead>
 
-        </tbody>
+          <tbody>
+            {data?.map((item) => (
+              <tr key={item.id} className="border-t hover:bg-gray-50">
+                <td className="p-3">{item.tanggal}</td>
 
-      </table>
+                <td className="p-3">{item.uraian}</td>
+
+                <td
+                  className={`p-3 font-semibold ${
+                    item.jenis === "Pemasukan"
+                      ? "text-green-600"
+                      : item.jenis === "Pengeluaran"
+                      ? "text-red-600"
+                      : "text-blue-600"
+                  }`}
+                >
+                  {item.jenis}
+                </td>
+
+                <td className="p-3 text-right">
+                  {rupiah(item.nominal)}
+                </td>
+              </tr>
+            ))}
+
+            {data?.length === 0 && (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="p-6 text-center text-gray-500"
+                >
+                  Belum ada data.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
     </div>
   );
