@@ -1,149 +1,139 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import StatusBadge from "@/components/admin/surat/StatusBadge";
 
 type Surat = {
   id: number;
   nomor_pengajuan: string;
-  nama_lengkap: string;
+  nama: string;
   jenis_surat: string;
-  surat_lainnya: string | null;
-  no_hp: string;
   status: string;
   created_at: string;
 };
 
 export default function AdminSuratPage() {
-  const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Surat[]>([]);
-
-  async function loadData() {
-    setLoading(true);
-
-    const { data: hasil, error } = await supabase
-      .from("surat")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (!error && hasil) {
-      setData(hasil);
-    }
-
-    setLoading(false);
-  }
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadData();
   }, []);
 
-  async function ubahStatus(id: number, status: string) {
-    const { error } = await supabase
+  async function loadData() {
+    const { data, error } = await supabase
       .from("surat")
-      .update({ status })
-      .eq("id", id);
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    if (error) {
-      alert(error.message);
-      return;
+    if (!error && data) {
+      setData(data);
     }
 
-    loadData();
-  }
-
-  if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto p-8">
-        <h1 className="text-3xl font-bold">Memuat Data...</h1>
-      </div>
-    );
+    setLoading(false);
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-8">
-      <h1 className="text-4xl font-bold mb-8">
-        Pengajuan Surat Warga
-      </h1>
+    <div className="p-6">
+
+      <div className="flex items-center justify-between mb-6">
+
+        <div>
+          <h1 className="text-2xl font-bold">
+            Data Pengajuan Surat
+          </h1>
+
+          <p className="text-gray-500">
+            Kelola seluruh pengajuan surat warga.
+          </p>
+        </div>
+
+      </div>
 
       <div className="bg-white rounded-xl shadow overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-green-700 text-white">
+
+        <table className="min-w-full">
+
+          <thead className="bg-gray-100">
+
             <tr>
-              <th className="p-3 text-left">Nomor</th>
-              <th className="p-3 text-left">Nama</th>
-              <th className="p-3 text-left">Jenis Surat</th>
-              <th className="p-3 text-left">HP</th>
-              <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-center">Aksi</th>
+
+              <th className="text-left p-4">No</th>
+              <th className="text-left p-4">No. Pengajuan</th>
+              <th className="text-left p-4">Nama</th>
+              <th className="text-left p-4">Jenis Surat</th>
+              <th className="text-left p-4">Status</th>
+              <th className="text-left p-4">Aksi</th>
+
             </tr>
+
           </thead>
 
           <tbody>
-            {data.length === 0 && (
+
+            {loading && (
               <tr>
-                <td
-                  colSpan={6}
-                  className="text-center p-8 text-gray-500"
-                >
+                <td colSpan={6} className="text-center p-6">
+                  Memuat data...
+                </td>
+              </tr>
+            )}
+
+            {!loading && data.length === 0 && (
+              <tr>
+                <td colSpan={6} className="text-center p-6">
                   Belum ada pengajuan surat.
                 </td>
               </tr>
             )}
 
-            {data.map((item) => (
-              <tr key={item.id} className="border-t">
-                <td className="p-3">{item.nomor_pengajuan}</td>
+            {data.map((item, index) => (
 
-                <td className="p-3">{item.nama_lengkap}</td>
-
-                <td className="p-3">
-                  {item.jenis_surat === "Lain-lain"
-                    ? item.surat_lainnya
-                    : item.jenis_surat}
+              <tr
+                key={item.id}
+                className="border-t"
+              >
+                <td className="p-4">
+                  {index + 1}
                 </td>
 
-                <td className="p-3">{item.no_hp}</td>
+                <td className="p-4">
+                  {item.nomor_pengajuan}
+                </td>
 
-                <td className="p-3">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      item.status === "Menunggu Persetujuan"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : item.status === "Disetujui"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
+                <td className="p-4">
+                  {item.nama}
+                </td>
+
+                <td className="p-4">
+                  {item.jenis_surat}
+                </td>
+
+                <td className="p-4">
+                  <StatusBadge status={item.status} />
+                </td>
+
+                <td className="p-4">
+                  <Link
+                    href={`/admin/surat/${item.id}`}
+                    className="text-blue-600 hover:underline"
                   >
-                    {item.status}
-                  </span>
+                    Lihat
+                  </Link>
                 </td>
 
-                <td className="p-3">
-                  <div className="flex gap-2 justify-center">
-                    <button
-                      onClick={() =>
-                        ubahStatus(item.id, "Disetujui")
-                      }
-                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded"
-                    >
-                      ✔ Setujui
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        ubahStatus(item.id, "Ditolak")
-                      }
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded"
-                    >
-                      ✖ Tolak
-                    </button>
-                  </div>
-                </td>
               </tr>
+
             ))}
+
           </tbody>
+
         </table>
+
       </div>
+
     </div>
   );
 }

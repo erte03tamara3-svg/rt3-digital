@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 export default function Layout({
@@ -5,9 +8,13 @@ export default function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <AdminLayout>
-      {children}
-    </AdminLayout>
-  );
+  const pathname = usePathname();
+
+  const isPreview = pathname.includes("/preview");
+
+  if (isPreview) {
+    return <>{children}</>;
+  }
+
+  return <AdminLayout>{children}</AdminLayout>;
 }
