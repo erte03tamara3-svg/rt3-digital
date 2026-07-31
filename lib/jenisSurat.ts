@@ -1,34 +1,20 @@
-export const jenisSurat = [
-  {
-    value: "keterangan",
-    nama: "Surat Keterangan",
-  },
-  {
-    value: "domisili",
-    nama: "Surat Keterangan Domisili",
-  },
-  {
-    value: "usaha",
-    nama: "Surat Keterangan Usaha",
-  },
-  {
-    value: "tidak_mampu",
-    nama: "Surat Keterangan Tidak Mampu",
-  },
-  {
-    value: "nikah",
-    nama: "Surat Pengantar Nikah",
-  },
-  {
-    value: "skck",
-    nama: "Surat Pengantar SKCK",
-  },
-  {
-    value: "kematian",
-    nama: "Surat Keterangan Kematian",
-  },
-  {
-    value: "pindah",
-    nama: "Surat Keterangan Pindah",
-  },
-];
+export function getNamaJenisSurat(surat: any): string {
+  if (!surat) return "-";
+
+  if (surat.jenis_surat === "Lain-lain") {
+    return surat.surat_lainnya || "Lain-lain";
+  }
+
+  const mapping: Record<string, string> = {
+    "Domisili": "Surat Keterangan Domisili",
+    "Usaha": "Surat Keterangan Usaha",
+    "Tidak Mampu": "Surat Keterangan Tidak Mampu",
+    "Pengantar Nikah": "Surat Pengantar Nikah",
+    "Kehilangan": "Surat Keterangan Kehilangan",
+    "Belum Menikah": "Surat Keterangan Belum Menikah",
+    "Kematian": "Surat Keterangan Kematian",
+    "Pindah": "Surat Keterangan Pindah",
+  };
+
+  return mapping[surat.jenis_surat] ?? surat.jenis_surat;
+}

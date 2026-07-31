@@ -1,162 +1,164 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import StatusBadge from "@/components/admin/surat/StatusBadge";
 import { generateNomorSurat } from "@/lib/generateNomorSurat";
 
-type Surat = {
-  id: number;
-  nomor_pengajuan: string;
-  nomor_surat: string | null;
-  nama_lengkap: string;
-  identitas: string;
-  tempat_lahir: string;
-  tanggal_lahir: string;
-  jenis_kelamin: string;
-  agama: string;
-  pekerjaan: string;
-  status_perkawinan: string;
-  alamat: string;
-  no_hp: string;
-  jenis_surat: string;
-  surat_lainnya: string | null;
-  keperluan: string;
-  status: string;
-  catatan_admin: string | null;
-};
-
 export default function DetailSuratPage() {
-  const params = useParams();
+  const { id } = useParams();
+  const router = useRouter();
 
-  const [surat, setSurat] = useState<Surat | null>(null);
+  const [surat, setSurat] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (!id) return;
+
     loadData();
-  }, []);
+  }, [id]);
 
   async function loadData() {
     const { data } = await supabase
       .from("surat")
       .select("*")
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
 
-    if (data) setSurat(data);
-
+    setSurat(data);
     setLoading(false);
   }
 
-  async function approveSurat() {
-    const { data: last } = await supabase
-      .from("surat")
-      .select("nomor_surat")
-      .not("nomor_surat", "is", null)
-      .order("id", { ascending: false })
-      .limit(1)
-      .single();
+  async function setujuiSurat() {
+    if (!surat) return;
 
-    const nomorSurat = generateNomorSurat(last?.nomor_surat);
+    setSaving(true);
 
-    await supabase
+    let nomorSurat = surat.nomor_surat;
+
+    if (!nomorSurat) {
+      nomorSurat = await generateNomorSurat();
+    }
+
+    const { error } = await supabase
       .from("surat")
       .update({
         status: "Disetujui",
         nomor_surat: nomorSurat,
-        tanggal_disetujui: new Date().toISOString(),
-        tanggal_surat: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       })
-      .eq("id", params.id);
+      .eq("id", surat.id);
 
-    loadData();
+    setSaving(false);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    router.push(`/admin/surat/${surat.id}/preview`);
   }
 
-  async function updateStatus(status: string) {
-    await supabase
+  async function tolakSurat() {
+    if (!confirm("Yakin ingin menolak surat ini?")) return;
+
+    setSaving(true);
+
+    const { error } = await supabase
       .from("surat")
-      .update({ status })
-      .eq("id", params.id);
+      .update({
+        status: "Ditolak",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", surat.id);
 
+    setSaving(false);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    router.refresh();
     loadData();
   }
 
-  if (loading) return <div className="p-6">Memuat data...</div>;
+  if (loading) {
+    return (
+      <div className="p-10 text-center">
+        Memuat...
+      </div>
+    );
+  }
 
-  if (!surat) return <div className="p-6">Data tidak ditemukan.</div>;
+  if (!surat) {
+    return (
+      <div className="p-10 text-center">
+        Surat tidak ditemukan.
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 max-w-5xl">
+    <div className="max-w-4xl mx-auto p-8">
 
-      <h1 className="text-3xl font-bold mb-6">
+      <h1 className="text-3xl font-bold mb-8">
         Detail Pengajuan Surat
       </h1>
 
-      <div className="bg-white rounded-xl shadow p-6 space-y-4">
+      <div className="bg-white rounded-xl shadow border p-6 space-y-4">
 
-        <div className="flex justify-between">
-          <span>No. Pengajuan</span>
-          <strong>{surat.nomor_pengajuan}</strong>
+        <div>
+          <strong>Nama</strong>
+          <br />
+          {surat.nama_lengkap}
         </div>
 
-        <div className="flex justify-between">
-          <span>Nomor Surat</span>
-          <strong>{surat.nomor_surat || "-"}</strong>
+        <div>
+          <strong>NIK</strong>
+          <br />
+          {surat.identitas}
         </div>
 
-        <div className="flex justify-between">
-          <span>Nama</span>
-          <strong>{surat.nama_lengkap}</strong>
+        <div>
+          <strong>Jenis Surat</strong>
+          <br />
+          {surat.jenis_surat}
         </div>
 
-        <div className="flex justify-between">
-          <span>NIK</span>
-          <strong>{surat.identitas}</strong>
-        </div>
-
-        <div className="flex justify-between">
-          <span>Jenis Surat</span>
-          <strong>{surat.jenis_surat}</strong>
-        </div>
-
-        <div className="flex justify-between">
-          <span>Status</span>
-          <StatusBadge status={surat.status.toLowerCase()} />
+        <div>
+          <strong>Status</strong>
+          <br />
+          {surat.status}
         </div>
 
       </div>
 
-      <div className="flex gap-3 mt-6">
+      <div className="flex gap-4 mt-8">
 
         <button
-          onClick={approveSurat}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg"
+          onClick={setujuiSurat}
+          disabled={saving}
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg"
         >
-          Setujui
+          {saving ? "Memproses..." : "Setujui Surat"}
         </button>
 
         <button
-          onClick={() => updateStatus("Revisi")}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-        >
-          Revisi
-        </button>
-
-        <button
-          onClick={() => updateStatus("Ditolak")}
-          className="bg-red-600 text-white px-4 py-2 rounded-lg"
+          onClick={tolakSurat}
+          disabled={saving}
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg"
         >
           Tolak
         </button>
 
-        <Link
-          href={`/admin/surat/${surat.id}/preview`}
-          className="bg-gray-800 text-white px-4 py-2 rounded-lg"
+        <button
+          onClick={() => router.back()}
+          className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg"
         >
-          Preview Surat
-        </Link>
+          Kembali
+        </button>
 
       </div>
 

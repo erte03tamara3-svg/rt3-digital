@@ -1,45 +1,38 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import TemplateSurat from "@/components/surat/template/TemplateSurat";
 
-export default function PreviewSurat({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-
-  const [loading, setLoading] = useState(true);
+export default function PreviewSuratPage() {
+  const { id } = useParams();
   const [surat, setSurat] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
+    if (!id) return;
+
+    const getSurat = async () => {
+      const { data, error } = await supabase
+        .from("surat")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (!error) {
+        setSurat(data);
+      }
+
+      setLoading(false);
+    };
+
+    getSurat();
   }, [id]);
-
-  async function loadData() {
-    setLoading(true);
-
-    const { data, error } = await supabase
-      .from("surat")
-      .select("*")
-      .eq("id", Number(id))
-      .single();
-
-    if (error) {
-      console.error(error);
-    } else {
-      setSurat(data);
-    }
-
-    setLoading(false);
-  }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-lg">
+      <div className="flex justify-center items-center min-h-screen text-lg">
         Memuat surat...
       </div>
     );
@@ -47,37 +40,31 @@ export default function PreviewSurat({
 
   if (!surat) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-lg text-red-600">
-        Data surat tidak ditemukan.
+      <div className="flex justify-center items-center min-h-screen text-red-600 text-lg">
+        Surat tidak ditemukan.
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-200 py-10 print:bg-white print:py-0">
-
-      <div className="max-w-5xl mx-auto mb-6 flex gap-3 print:hidden">
-
-        <Link
-          href={`/admin/surat/${id}`}
-          className="bg-gray-700 hover:bg-gray-800 text-white px-5 py-3 rounded-lg"
+    <div className="bg-gray-100 min-h-screen py-10">
+      <div className="flex justify-center mb-6 gap-3 print:hidden">
+        <button
+          onClick={() => window.history.back()}
+          className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg"
         >
-          ← Kembali
-        </Link>
+          Kembali
+        </button>
 
         <button
           onClick={() => window.print()}
-          className="bg-green-700 hover:bg-green-800 text-white px-5 py-3 rounded-lg"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
         >
-          🖨 Cetak Surat
+          Cetak Surat
         </button>
-
       </div>
 
-      <div className="flex justify-center print:block">
-        <TemplateSurat surat={surat} />
-      </div>
-
-    </main>
+      <TemplateSurat surat={surat} />
+    </div>
   );
 }

@@ -9,10 +9,11 @@ export default function LoginPage() {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    alert(`Username: ${username}\nPassword: ${password}`);
+    const user = username.trim();
+    const pass = password.trim();
 
-    if (username.trim() === "admin" && password === "rt32026") {
-      localStorage.setItem("admin-login", "true");
+    if (user === "admin" && pass === "rt32026") {
+      document.cookie = "rt3_admin_login=true; Path=/; Max-Age=86400; SameSite=Lax";
       window.location.href = "/admin";
       return;
     }
