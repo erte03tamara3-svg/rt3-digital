@@ -9,8 +9,14 @@ export default function IsiSurat({ surat }: Props) {
       : surat.jenis_surat;
 
   return (
-    <div className="mt-8 text-[14pt] leading-8 text-justify">
-      <p>
+    <div
+      className="mt-5 text-[13pt] leading-[1.45] text-justify"
+      style={{
+        breakInside: "avoid",
+        pageBreakInside: "avoid",
+      }}
+    >
+      <p className="mb-4">
         Berdasarkan data administrasi kependudukan yang ada serta keterangan
         yang diberikan oleh yang bersangkutan, dengan ini diterangkan bahwa
         nama tersebut di atas benar merupakan warga RT 003 RW 024 Perumahan
@@ -18,17 +24,23 @@ export default function IsiSurat({ surat }: Props) {
         Kota Batam.
       </p>
 
-      <p className="mt-6">
+      <p className="mb-3">
         Surat keterangan ini diterbitkan untuk keperluan:
       </p>
 
-      <div className="my-6 text-center">
-        <span className="inline-block min-w-[350px] border-b-2 border-black px-6 py-1 text-center font-bold uppercase">
+      <div
+        className="mb-4 text-center"
+        style={{
+          breakInside: "avoid",
+          pageBreakInside: "avoid",
+        }}
+      >
+        <span className="inline-block min-w-[320px] border-b-2 border-black px-4 py-[2px] font-bold uppercase">
           {keperluan || "-"}
         </span>
       </div>
 
-      <p>
+      <p className="m-0">
         Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat
         dipergunakan sebagaimana mestinya. Apabila di kemudian hari terdapat
         kekeliruan dalam surat ini, maka akan dilakukan perbaikan sesuai

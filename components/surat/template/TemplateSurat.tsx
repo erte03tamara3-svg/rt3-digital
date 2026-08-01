@@ -3,59 +3,73 @@ import PembukaSurat from "./PembukaSurat";
 import IdentitasSurat from "./IdentitasSurat";
 import IsiSurat from "./IsiSurat";
 import TandaTangan from "./TandaTangan";
-import Image from "next/image";
 
 type Props = {
   surat: any;
 };
 
 export default function TemplateSurat({ surat }: Props) {
-  const qrUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verifikasi/${surat.verification_token}`;
-
   return (
     <div
-      className="relative bg-white w-[210mm] min-h-[297mm] mx-auto px-[18mm] pt-[14mm] pb-[18mm] text-black print:shadow-none"
+      className="mx-auto bg-white text-black print:shadow-none"
       style={{
-        fontFamily: "Times New Roman",
+        width: "210mm",
+        minHeight: "297mm",
+        padding: "12mm 18mm 12mm 18mm",
+        fontFamily: '"Times New Roman", serif',
+        boxSizing: "border-box",
+        overflow: "visible",
       }}
     >
       <KopSurat />
 
-      <div className="mt-8 text-center">
-        <h1 className="text-[18pt] font-bold uppercase underline">
+      <div className="mt-5 text-center">
+        <h1
+          style={{
+            fontSize: "18pt",
+            fontWeight: 700,
+            textDecoration: "underline",
+            textUnderlineOffset: "3px",
+            letterSpacing: "0.5px",
+          }}
+        >
           SURAT KETERANGAN
         </h1>
 
-        <p className="mt-2 text-[14pt]">
+        <p
+          style={{
+            fontSize: "13pt",
+            marginTop: "5mm",
+          }}
+        >
           Nomor :
-          <span className="font-semibold">
+          <span style={{ fontWeight: 700 }}>
             {" "}
             {surat.nomor_surat || "-"}
           </span>
         </p>
       </div>
 
-      <PembukaSurat />
+      <div style={{ marginTop: "5mm" }}>
+        <PembukaSurat />
+      </div>
 
-      <IdentitasSurat surat={surat} />
+      <div style={{ marginTop: "4mm" }}>
+        <IdentitasSurat surat={surat} />
+      </div>
 
-      <IsiSurat surat={surat} />
+      <div style={{ marginTop: "4mm" }}>
+        <IsiSurat surat={surat} />
+      </div>
 
-      <TandaTangan surat={surat} />
-
-      <div className="absolute bottom-[18mm] left-[18mm] flex flex-col items-center">
-        <Image
-          src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(
-            qrUrl
-          )}`}
-          alt="QR Verifikasi"
-          width={80}
-          height={80}
-          unoptimized
-        />
-        <p className="mt-1 text-[8pt] text-center">
-          Scan untuk verifikasi
-        </p>
+      <div
+        style={{
+          marginTop: "10mm",
+          pageBreakInside: "avoid",
+          breakInside: "avoid",
+        }}
+      >
+        <TandaTangan surat={surat} />
       </div>
     </div>
   );

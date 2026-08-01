@@ -29,41 +29,48 @@ body {
 
   @page {
     size: A4;
-    margin: 10mm;
+    margin: 0;
   }
 
   html,
   body {
     width: 210mm;
-    height: 297mm;
-    background: white !important;
-  }
-
-  body {
+    min-height: 297mm;
     margin: 0;
     padding: 0;
+    background: #fff !important;
+    overflow: visible !important;
   }
 
   nav,
   aside,
   header,
   footer,
-  button {
-    display: none !important;
-  }
-
+  button,
   .print\:hidden {
     display: none !important;
   }
 
   main {
-    background: white !important;
-    padding: 0 !important;
     margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
   }
 
   * {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    box-sizing: border-box;
+  }
+
+  table,
+  tr,
+  td,
+  p,
+  div {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }
